@@ -12,6 +12,8 @@ namespace StarterAssets
 		public Vector2 look;
 		public bool jump;
 		public bool sprint;
+		public bool sit;
+		public bool standUp;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
@@ -28,7 +30,7 @@ namespace StarterAssets
 
 		public void OnLook(InputValue value)
 		{
-			if(cursorInputForLook)
+			if (cursorInputForLook)
 			{
 				LookInput(value.Get<Vector2>());
 			}
@@ -43,13 +45,22 @@ namespace StarterAssets
 		{
 			SprintInput(value.isPressed);
 		}
+		public void OnSit(InputValue value)
+		{
+			SitInput(value.isPressed);
+		}
+		public void OnStandUp(InputValue value)
+		{
+			StandUpInput(value.isPressed);
+		}
+
 #endif
 
 
 		public void MoveInput(Vector2 newMoveDirection)
 		{
 			move = newMoveDirection;
-		} 
+		}
 
 		public void LookInput(Vector2 newLookDirection)
 		{
@@ -65,6 +76,14 @@ namespace StarterAssets
 		{
 			sprint = newSprintState;
 		}
+		public void SitInput(bool newSitState)
+		{
+			sit = newSitState;
+		}
+		public void StandUpInput(bool newStandUpState)
+		{
+			standUp = newStandUpState;
+		}
 
 		private void OnApplicationFocus(bool hasFocus)
 		{
@@ -76,5 +95,5 @@ namespace StarterAssets
 			Cursor.lockState = newState ? CursorLockMode.Locked : CursorLockMode.None;
 		}
 	}
-	
+
 }

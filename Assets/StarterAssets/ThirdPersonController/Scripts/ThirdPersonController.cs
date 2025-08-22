@@ -97,8 +97,10 @@ namespace StarterAssets
         private int _animIDJump;
         private int _animIDFreeFall;
         private int _animIDMotionSpeed;
+        private int _animIDIsSitting; // Tambahan
+        private int _animIDStandUp;
 
-#if ENABLE_INPUT_SYSTEM 
+#if ENABLE_INPUT_SYSTEM
         private PlayerInput _playerInput;
 #endif
         private Animator _animator;
@@ -109,6 +111,7 @@ namespace StarterAssets
         private const float _threshold = 0.01f;
 
         private bool _hasAnimator;
+        private bool _isSitting = false; // Tambahan
 
         private bool IsCurrentDeviceMouse
         {
@@ -158,6 +161,7 @@ namespace StarterAssets
 
             JumpAndGravity();
             GroundedCheck();
+            HandleSitStand();
             Move();
         }
 
@@ -173,6 +177,8 @@ namespace StarterAssets
             _animIDJump = Animator.StringToHash("Jump");
             _animIDFreeFall = Animator.StringToHash("FreeFall");
             _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
+            _animIDIsSitting = Animator.StringToHash("IsSitting"); // Tambahan
+            _animIDStandUp = Animator.StringToHash("StandUp");
         }
 
         private void GroundedCheck()
@@ -213,6 +219,17 @@ namespace StarterAssets
 
         private void Move()
         {
+            // Jika sedang duduk, jangan bergerak
+            if (_isSitting)
+            {
+                _speed = 0.0f;
+                _animationBlend = 0.0f;
+                if (_hasAnimator)
+                {
+                    _animator.SetFloat(_animIDSpeed, _animationBlend);
+                }
+                return;
+            }
             // set target speed based on move speed, sprint speed and if sprint is pressed
             float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
 
@@ -345,6 +362,29 @@ namespace StarterAssets
             if (_verticalVelocity < _terminalVelocity)
             {
                 _verticalVelocity += Gravity * Time.deltaTime;
+            }
+        }
+        private void HandleSitStand()
+        {
+            if (_hasAnimator)
+            {
+                // Logika untuk mulai duduk
+                if (_input.sit && !_isSitting && Grounded)
+                {
+                    _isSitting = true;
+                    _animator.SetBool(_animIDIsSitting, true);
+                    // Reset input agar tidak memicu terus-menerus
+                    _input.sit = false;
+                }
+                // Logika untuk berdiri
+                else if (_input.standUp && _isSitting)
+                {
+                    _isSitting = false;
+                    _animator.SetBool(_animIDIsSitting, false);
+                    _animator.SetTrigger(_animIDStandUp);
+                    // Reset input agar tidak memicu terus-menerus
+                    _input.standUp = false;
+                }
             }
         }
 
