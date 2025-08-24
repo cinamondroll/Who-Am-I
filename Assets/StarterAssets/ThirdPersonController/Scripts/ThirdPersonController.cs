@@ -1,4 +1,4 @@
-﻿ using UnityEngine;
+﻿using UnityEngine;
 #if ENABLE_INPUT_SYSTEM 
 using UnityEngine.InputSystem;
 #endif
@@ -99,6 +99,7 @@ namespace StarterAssets
         private int _animIDMotionSpeed;
         private int _animIDIsSitting; // Tambahan
         private int _animIDStandUp;
+        private bool _isCameraActive = true;
 
 #if ENABLE_INPUT_SYSTEM
         private PlayerInput _playerInput;
@@ -138,7 +139,7 @@ namespace StarterAssets
         private void Start()
         {
             _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
-            
+
             _hasAnimator = TryGetComponent(out _animator);
             _controller = GetComponent<CharacterController>();
             _input = GetComponent<StarterAssetsInputs>();
@@ -198,6 +199,10 @@ namespace StarterAssets
 
         private void CameraRotation()
         {
+            if (!_isCameraActive)
+            {
+                return;
+            }
             // if there is an input and camera position is not fixed
             if (_input.look.sqrMagnitude >= _threshold && !LockCameraPosition)
             {
@@ -427,6 +432,12 @@ namespace StarterAssets
             {
                 AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
             }
+        }
+
+        // ... Tambahkan metode publik
+        public void SetCameraActive(bool state)
+        {
+            _isCameraActive = state;
         }
     }
 }

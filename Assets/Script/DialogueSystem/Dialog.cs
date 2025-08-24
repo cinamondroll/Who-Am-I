@@ -1,23 +1,26 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 
-[CreateAssetMenu(fileName = "New Dialog", menuName = "Dialog System/Dialog", order = 1)]
+[CreateAssetMenu(fileName = "New Dialog", menuName = "Dialog/Dialog")]
 public class Dialog : ScriptableObject
 {
-    [Header("Dialog Text")]
-    [SerializeField] public string speakerName;
-    [TextArea(3, 10)]
-    [SerializeField] public string text;
-
-    [Header("Player Choices")]
-    public List<Choice> choices;
+    public List<DialogNode> nodes;  // Daftar node dalam dialog
 
     [System.Serializable]
-    public class Choice
+    public class DialogNode
     {
-        [TextArea(1, 3)]
-        public string choiceText;
-        public int nextNodeIndex;
-    }
+        public string speakerName;  // Nama pembicara
+        public string text;         // Teks dialog
 
+        public Sprite image;
+        public List<Choice> choices = new List<Choice>();  // Pilihan dalam dialog
+
+        [System.Serializable]
+        public class Choice
+        {
+            public string choiceText;  // Teks pilihan
+            public int nextNodeIndex; // Indeks node berikutnya yang akan ditampilkan jika pilihan ini dipilih
+        }
+    }
 }
